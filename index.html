@@ -14,23 +14,23 @@
     <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
 </head>
 
-<body class="bg-body-tertiary">
+<body>
     <div id="app">
-        <div class="container-xl min-vh-100 d-flex flex-column">
+        <div class="container-xl app-shell min-vh-100 d-flex flex-column">
             <app-header
                 :current-view="currentView"
                 @view-change="currentView = $event">
             </app-header>
 
             <main class="flex-grow-1">
-                <section class="pt-5 pb-4" aria-labelledby="page-title">
-                    <p class="small text-uppercase fw-semibold text-success mb-2">
+                <section class="page-intro pt-5 pb-4" aria-labelledby="page-title">
+                    <p class="eyebrow small text-uppercase fw-semibold text-success mb-2">
                         {{ currentView === 'groceries' ? 'Your kitchen' : 'Meal inspiration' }}
                     </p>
                     <h1 id="page-title" class="fw-semibold mb-2">
                         {{ currentView === 'groceries' ? 'Grocery list' : 'Recipes' }}
                     </h1>
-                    <p class="text-secondary mb-0">
+                    <p class="intro-copy text-secondary mb-0">
                         {{ currentView === 'groceries'
                             ? 'Keep track of what you have in your kitchen.'
                             : 'Find recipes that make the most of your ingredients.' }}
@@ -45,7 +45,7 @@
                 </grocery-table>
                 <recipe-view v-else></recipe-view>
             </main>
-            <footer class="mt-auto text-center small text-secondary py-4">
+            <footer class="page-footer mt-auto text-center small text-secondary py-4">
                 A little more organized, one grocery at a time.
             </footer>
         </div>
