@@ -1,7 +1,6 @@
 :root {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: #23332b;
-    background: #f7f8f3;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
 }
@@ -13,57 +12,45 @@ body {
     background:
         radial-gradient(ellipse at 86% 0%, rgba(216, 231, 205, 0.42), transparent 34rem),
         #f7f8f3;
-}
-
-button {
-    font: inherit;
+    color: #23332b;
 }
 
 .app-shell {
     width: min(1120px, calc(100% - 48px));
-    min-height: 100vh;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
 }
 
-.page-header {
+.app-header {
     min-height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #e6e9e1;
+    border-bottom-color: #e6e9e1 !important;
 }
 
 .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: #25362d;
-    font-size: 21px;
-    font-weight: 750;
+    color: #25362d !important;
+    font-size: 21px !important;
+    font-weight: 750 !important;
     letter-spacing: -0.8px;
-    text-decoration: none;
 }
 
 .brand-mark {
     width: 32px;
     height: 32px;
-    display: grid;
-    place-items: center;
-    border-radius: 10px;
-    background: #315d43;
-    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px !important;
+    background-color: #315d43 !important;
     font-size: 17px;
     letter-spacing: 0;
 }
 
-.brand-period {
-    color: #75a35e;
+.brand .text-success {
+    color: #75a35e !important;
 }
 
 .view-switch {
-    display: inline-flex;
     gap: 4px;
     padding: 4px;
     border: 1px solid #e5e9e1;
@@ -71,52 +58,48 @@ button {
     background: rgba(255, 255, 255, 0.75);
 }
 
-.view-button {
+.view-switch .view-button {
+    --bs-btn-color: #67766c;
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: #315d43;
+    --bs-btn-hover-bg: #f1f5ee;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #315d43;
+    --bs-btn-active-border-color: #315d43;
     padding: 9px 16px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: #67766c;
-    cursor: pointer;
+    border-radius: 8px !important;
     font-size: 13px;
     font-weight: 650;
     transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 
-.view-button:hover {
-    color: #315d43;
-}
-
-.view-button.is-active {
-    background: #315d43;
+.view-switch .view-button.active {
     color: #fff;
+    background: #315d43;
     box-shadow: 0 2px 5px rgba(34, 64, 44, 0.16);
 }
 
-.view-button:focus-visible,
+.view-switch .view-button:focus-visible,
 .brand:focus-visible {
     outline: 3px solid #9ab88a;
     outline-offset: 3px;
 }
 
-main {
-    flex: 1;
-}
-
 .page-intro {
-    padding: 54px 0 28px;
+    padding: 54px 0 28px !important;
 }
 
 .eyebrow {
-    margin: 0 0 10px;
-    color: #6d8b63;
-    font-size: 10px;
-    font-weight: 750;
+    color: #6d8b63 !important;
+    font-size: 10px !important;
+    font-weight: 750 !important;
     letter-spacing: 1.6px;
 }
 
 .page-intro h1 {
-    margin: 0;
+    margin-top: 0;
     color: #26372e;
     font-size: clamp(30px, 4vw, 38px);
     font-weight: 680;
@@ -125,25 +108,23 @@ main {
 }
 
 .intro-copy {
-    margin: 10px 0 0;
-    color: #7b867d;
+    margin-top: 10px;
+    color: #7b867d !important;
     font-size: 14px;
 }
 
-.content-card {
+.grocery-card,
+.recipes-placeholder {
     overflow: hidden;
-    border: 1px solid #e8ebe4;
+    border: 1px solid #e8ebe4 !important;
     border-radius: 14px;
     background: #fff;
-    box-shadow: 0 8px 26px rgba(42, 59, 45, 0.035);
+    box-shadow: 0 8px 26px rgba(42, 59, 45, 0.05) !important;
 }
 
 .card-heading {
     min-height: 82px;
-    padding: 19px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 19px 24px !important;
     gap: 16px;
 }
 
@@ -156,55 +137,57 @@ main {
 }
 
 .card-heading p {
-    margin: 5px 0 0;
-    color: #8a938c;
-    font-size: 12px;
+    margin-top: 5px;
+    color: #8a938c !important;
+    font-size: 12px !important;
 }
 
 .item-count {
-    padding: 6px 10px;
-    border-radius: 20px;
-    background: #f1f5ee;
-    color: #57774e;
+    padding: 6px 10px !important;
+    border-radius: 20px !important;
+    background: #f1f5ee !important;
+    color: #57774e !important;
     font-size: 11px;
     font-weight: 650;
     white-space: nowrap;
 }
 
 .api-notice {
-    margin: 0 24px 16px;
-    padding: 10px 12px;
+    margin: 0 24px 16px !important;
+    padding: 10px 12px !important;
     display: flex;
     align-items: center;
-    gap: 9px;
-    border: 1px solid #e5ebdf;
+    gap: 9px !important;
+    border: 1px solid #e5ebdf !important;
     border-radius: 8px;
-    background: #f7f9f4;
-    color: #65735f;
-    font-size: 12px;
+    background: #f7f9f4 !important;
+    color: #65735f !important;
+    font-size: 12px !important;
 }
 
-.api-notice-error {
-    border-color: #f1dfd7;
-    background: #fff8f5;
-    color: #91533c;
+.api-notice.alert-warning {
+    border-color: #f1dfd7 !important;
+    background: #fff8f5 !important;
+    color: #91533c !important;
 }
 
-.notice-icon {
+.api-notice .badge {
     width: 17px;
     height: 17px;
+    padding: 0 !important;
     display: inline-grid;
     flex: 0 0 auto;
     place-items: center;
     border: 1px solid currentColor;
     border-radius: 50%;
+    background: transparent !important;
+    color: inherit !important;
     font-size: 10px;
     font-weight: 700;
 }
 
-.table-wrap {
-    overflow-x: auto;
-    border-top: 1px solid #edf0ea;
+.grocery-table-wrap {
+    border-top-color: #edf0ea !important;
 }
 
 .grocery-table {
@@ -214,44 +197,40 @@ main {
     white-space: nowrap;
 }
 
-.grocery-table th {
+.grocery-card .grocery-table > thead th {
     padding: 13px 20px;
+    border-bottom-color: #edf0ea;
     background: #fbfcfa;
-    color: #8b948d;
-    font-size: 10px;
-    font-weight: 700;
+    color: #8b948d !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
     letter-spacing: 0.65px;
-    text-transform: uppercase;
 }
 
-.grocery-table td {
+.grocery-card .grocery-table > tbody td {
     padding: 15px 20px;
-    border-top: 1px solid #f0f2ed;
+    border-bottom-color: #f0f2ed;
     color: #58665c;
     font-size: 13px;
 }
 
-.grocery-table tbody tr:not(:last-child) td {
-    border-bottom: 1px solid #f0f2ed;
-}
-
-.grocery-table .id-cell {
-    color: #97a198;
+.grocery-card .grocery-table > tbody td.text-secondary {
+    color: #97a198 !important;
     font-variant-numeric: tabular-nums;
 }
 
-.grocery-table .name-cell {
+.grocery-card .grocery-table > tbody td.fw-semibold {
     color: #2e4035;
-    font-weight: 650;
+    font-weight: 650 !important;
 }
 
 .ingredient-tag {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 5px;
-    background: #f2f6ef;
-    color: #5c7955;
+    padding: 4px 8px !important;
+    border-radius: 5px !important;
+    background: #f2f6ef !important;
+    color: #5c7955 !important;
     font-size: 11px;
+    font-weight: 500;
 }
 
 .empty-state {
@@ -259,21 +238,16 @@ main {
     text-align: center;
 }
 
-.empty-state > * {
-    display: block;
-    margin: 0 auto;
-}
-
 .empty-state .empty-icon {
     width: 32px;
     height: 32px;
-    margin-bottom: 10px;
-    display: grid;
+    margin: 0 auto 10px;
+    display: grid !important;
     place-items: center;
     border: 1px solid #e4e9e0;
     border-radius: 10px;
-    color: #79916e;
-    font-size: 21px;
+    color: #79916e !important;
+    font-size: 21px !important;
     font-weight: 300;
 }
 
@@ -284,14 +258,14 @@ main {
 }
 
 .empty-state span:last-child {
-    margin-top: 5px;
-    color: #929b93;
-    font-size: 12px;
+    margin-top: 5px !important;
+    color: #929b93 !important;
+    font-size: 12px !important;
 }
 
 .recipes-placeholder {
     min-height: 270px;
-    padding: 48px 24px;
+    padding: 48px 24px !important;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -302,28 +276,27 @@ main {
 .recipe-icon {
     width: 42px;
     height: 42px;
-    margin-bottom: 15px;
+    margin-bottom: 15px !important;
     display: grid;
     place-items: center;
-    border-radius: 13px;
-    background: #f1f5ee;
-    color: #668457;
+    border-radius: 13px !important;
+    background: #f1f5ee !important;
+    color: #668457 !important;
     font-size: 22px;
 }
 
 .recipes-placeholder p {
     max-width: 400px;
     margin: 8px 0 0;
-    color: #818c83;
+    color: #818c83 !important;
     font-size: 13px;
     line-height: 1.6;
 }
 
 .page-footer {
-    padding: 32px 0 24px;
-    color: #9aa39b;
-    font-size: 11px;
-    text-align: center;
+    padding: 32px 0 24px !important;
+    color: #9aa39b !important;
+    font-size: 11px !important;
 }
 
 @media (max-width: 600px) {
@@ -331,30 +304,30 @@ main {
         width: min(100% - 32px, 1120px);
     }
 
-    .page-header {
+    .app-header {
         min-height: 74px;
     }
 
-    .view-button {
+    .view-switch .view-button {
         padding: 8px 11px;
         font-size: 12px;
     }
 
     .page-intro {
-        padding-top: 40px;
+        padding-top: 40px !important;
     }
 
     .card-heading {
-        padding: 17px 16px;
+        padding: 17px 16px !important;
     }
 
     .api-notice {
-        margin-right: 16px;
-        margin-left: 16px;
+        margin-right: 16px !important;
+        margin-left: 16px !important;
     }
 
-    .grocery-table th,
-    .grocery-table td {
+    .grocery-card .grocery-table > thead th,
+    .grocery-card .grocery-table > tbody td {
         padding-right: 15px;
         padding-left: 15px;
     }
