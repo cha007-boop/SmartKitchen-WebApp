@@ -1,14 +1,17 @@
 const baseURL = ''
 
-const tokenName = 'userInfo'
-
 const app = Vue.createApp({
     data() {
         return {
-            intro: 'Welcome to my Vue template',
+            currentView: 'groceries',
+            apiConfigured: Boolean(baseURL),
             list: [],
             newItem: {
-                prop: 'value'
+                id: null,
+                name: '',
+                barcode: '',
+                ingredient: '',
+                quantity: 0,
             },
             sortBy: null,
             sortAscending: true,
@@ -25,92 +28,21 @@ const app = Vue.createApp({
             postError: '',
             errorMessage: '',
 
-            auth: { username: '', password: '' },
-            userInfo: null,
-            authMessage: '',
-            isLoggingIn: false
         }
     },
     mounted() {
         this.getAll()
     },
-    created() {
-        const userInfoStr = localStorage.getItem(tokenName);
-        if (userInfoStr != null) {
-            this.userInfo = JSON.parse(userInfoStr);
-            this.getAll(); // Fetch items immediately if user is already logged in
-        }
-    },
     methods: {
-        parseJwt(token) {
-            const payload = token.split('.')[1];
-
-            // Convert Base64URL to regular Base64
-            const base64 = payload
-                .replace(/-/g, '+')
-                .replace(/_/g, '/');
-
-            // Decode and convert to JSON
-            const decodedPayload = atob(base64);
-
-            return JSON.parse(decodedPayload);
-        },
-        login() {
-            this.isLoggingIn = true
-            this.authMessage = ''
-
-            axios
-                .post(authURL, this.auth)
-                .then(response => {
-                    if (!response.data?.token) {
-                        throw new Error('The login response did not include an authentication token.')
-                    }
-
-                    this.userInfo = {
-                        username: this.auth.username,
-                        role: this.parseJwt(response.data.token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-                        token: response.data.token
-                    }
-                    localStorage.setItem(tokenName, JSON.stringify(this.userInfo))
-                    this.auth.password = ''
-                    bootstrap.Dropdown.getOrCreateInstance(document.getElementById('loginDropdown')).hide()
-                    this.getAll()
-                })
-                .catch((error) => {
-                    this.authMessage = this.getRequestErrorMessage(error)
-                })
-                .finally(() => {
-                    this.isLoggingIn = false
-                })
-
-        },
-        logout() {
-            localStorage.removeItem(tokenName)
-            this.userInfo = null
-            this.auth = { username: '', password: '' }
-            this.activeView = 'filter'
-            this.editingId = null
-            this.editItem = null
-        },
         // Fetch items using the current filters and sort order.
         getAll() {
-            const params = {}
-            const filters = {
-                // FILL WITH FILTER VALUES FROM data()
+            if (!baseURL) {
+                this.errorMessage = 'The grocery API URL has not been configured yet.'
+                return
             }
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value !== null && value !== undefined && value !== '') {
-                    params[key] = value
-                }
-            })
 
-            if (this.sortBy) {
-                params.sortBy = this.sortBy
-                params.sortOrder = this.sortAscending ? 'asc' : 'desc'
-            }
-            // Axios serializes params as URL query parameters.
             axios
-                .get(baseURL, { params })
+                .get(baseURL)
                 .then((response) => {
                     this.list = response.data
                     this.errorMessage = ''
@@ -121,34 +53,13 @@ const app = Vue.createApp({
                     this.errorMessage = this.getRequestErrorMessage(error)
                 })
         },
-        // Sort by a column, toggling direction when it is already selected.
-        sortByColumn(column) {
-            if (this.sortBy === column) {
-                this.sortAscending = !this.sortAscending
-            } else {
-                this.sortBy = column
-                this.sortAscending = true
-            }
-            // If doing sorting in back-end
-            this.getAll()
-
-            // // If doing sorting in front-end
-            // if (sortBy === 'abc'){
-            //     this.list.sort((a,b) => a.abc - b.abc)
-            // }
-            // //else if...
-        },
         // Create an item and reset the form after success.
         postItem() {
             this.isSubmitting = true
             this.postMessage = ''
             this.postError = ''
             axios
-                .post(baseURL, this.newItem, {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.userInfo.token
-                    }
-                })
+                .post(baseURL, this.newItem)
                 .then((response) => {
                     console.log('Post method called')
                     this.list.push(response.data)
@@ -168,7 +79,9 @@ const app = Vue.createApp({
         startEdit(item) {
             this.editingId = item.id
             this.editItem = {
-                prop: item.prop,
+                name: item.name,
+                ingredient: item.ingredient,
+                quantity: item.quantity,
                 // Fill with rest of properties
 
             }
