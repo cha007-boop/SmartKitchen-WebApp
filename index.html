@@ -39,11 +39,15 @@
 
                 <grocery-table
                     v-if="currentView === 'groceries'"
-                    :items="list"
+                    :items="groceryList"
                     :error-message="errorMessage"
                     :api-configured="apiConfigured">
                 </grocery-table>
-                <recipe-view v-else></recipe-view>
+                <recipe-view v-else
+                    :recipes="recipeList"
+                    :error-message="errorMessage"
+                    :api-configured="apiConfigured">
+                </recipe-view>
             </main>
             <footer class="page-footer mt-auto text-center small text-secondary py-4">
                 A little more organized, one grocery at a time.

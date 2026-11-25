@@ -5,7 +5,9 @@ const app = Vue.createApp({
         return {
             currentView: 'groceries',
             apiConfigured: Boolean(baseURL),
-            list: [],
+            groceryList: [],
+            ingredientList: [],
+            recipeList: [],
             newItem: {
                 id: null,
                 name: '',
