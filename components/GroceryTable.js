@@ -12,6 +12,40 @@ app.component('grocery-table', {
             type: Boolean,
             required: true,
         },
+        isRemoving: {
+            type: Boolean,
+            default: false,
+        },
+        removeError: {
+            type: String,
+            default: '',
+        },
+        removeCompleted: {
+            type: Number,
+            default: 0,
+        },
+        isUpdating: {
+            type: Boolean,
+            default: false,
+        },
+        updateError: {
+            type: String,
+            default: '',
+        },
+        editCompleted: {
+            type: Number,
+            default: 0,
+        },
+    },
+    emits: ['remove-item', 'edit-item', 'edit-modal-open'],
+    methods: {
+        openRemoveModal(item) {
+            this.$refs.removeItemModal.open(item)
+        },
+        openEditModal(item) {
+            this.$emit('edit-modal-open')
+            this.$refs.editItemModal.open(item)
+        },
     },
     template:
         /*html*/
@@ -38,22 +72,38 @@ app.component('grocery-table', {
                         <tr>
                             <th scope="col" class="small text-uppercase text-secondary">ID</th>
                             <th scope="col" class="small text-uppercase text-secondary">Navn</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Stregkode</th>
                             <th scope="col" class="small text-uppercase text-secondary">Ingrediens</th>
                             <th scope="col" class="small text-uppercase text-secondary">Antal</th>
+                            <th scope="col" class="small text-uppercase text-secondary">Handlinger</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="item in items" :key="item.id">
                             <td class="text-secondary">{{ item.id }}</td>
                             <td class="fw-semibold">{{ item.name }}</td>
-                            <td>{{ item.barcode }}</td>
                             <td>
                                 <span class="ingredient-tag badge rounded-pill text-bg-success-subtle">
                                     {{ item.ingredient }}
                                 </span>
                             </td>
                             <td>{{ item.quantity }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary btn-sm"
+                                        @click="openEditModal(item)">
+                                        Rediger
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        :disabled="item.quantity < 1"
+                                        @click="openRemoveModal(item)">
+                                        Fjern
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                         <tr v-if="items.length === 0">
                             <td colspan="5" class="empty-state text-center py-5">
@@ -67,5 +117,19 @@ app.component('grocery-table', {
                     </tbody>
                 </table>
             </div>
+            <remove-item-modal
+                ref="removeItemModal"
+                :is-removing="isRemoving"
+                :remove-error="removeError"
+                :remove-completed="removeCompleted"
+                @confirm-remove="$emit('remove-item', $event)">
+            </remove-item-modal>
+            <edit-item-modal
+                ref="editItemModal"
+                :is-updating="isUpdating"
+                :update-error="updateError"
+                :edit-completed="editCompleted"
+                @confirm-edit="$emit('edit-item', $event)">
+            </edit-item-modal>
         </section>`,
 })

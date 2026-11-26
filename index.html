@@ -23,23 +23,35 @@
             <main class="flex-grow-1">
                 <section class="page-intro pt-5 pb-4" aria-labelledby="page-title">
                     <p class="eyebrow small text-uppercase fw-semibold text-success mb-2">
-                        {{ currentView === 'groceries' ? 'Dit køkken' : 'Madspiration' }}
+                        {{ currentView === 'groceries' ? 'Dit køkken' : (currentView === 'recipes' ? 'Madspiration' : 'Ny vare') }}
                     </p>
                     <h1 id="page-title" class="fw-semibold mb-2">
-                        {{ currentView === 'groceries' ? 'Varer' : 'Opskrifter' }}
+                        {{ currentView === 'groceries' ? 'Varer' : (currentView === 'recipes' ? 'Opskrifter' : 'Tilføj vare') }}
                     </h1>
                     <p class="intro-copy text-secondary mb-0">
                         {{ currentView === 'groceries'
                         ? 'Hold styr på, hvad du har i dit køkken.'
-                        : 'Find opskrifter, der får mest muligt ud af dine ingredienser.' }}
+                        : (currentView === 'recipes'
+                            ? 'Find opskrifter, der får mest muligt ud af dine ingredienser.'
+                            : 'Registrer en ny vare i dit køkken.') }}
                     </p>
                 </section>
 
                 <grocery-table v-if="currentView === 'groceries'" :items="groceryList" :error-message="errorMessage"
-                    :api-configured="apiConfigured">
+                    :api-configured="apiConfigured" :is-removing="isRemoving" :remove-error="removeError"
+                    :remove-completed="removeCompleted" :is-updating="isUpdating" :update-error="updateError"
+                    :edit-completed="editCompleted" @remove-item="removeItem" @edit-item="updateGroceryItem"
+                    @edit-modal-open="updateError = ''">
                 </grocery-table>
-                <recipe-view v-else :recipes="recipeList" :error-message="errorMessage" :api-configured="apiConfigured">
+                <recipe-view v-else-if="currentView === 'recipes'" :recipes="recipeList" :error-message="errorMessage" :api-configured="apiConfigured">
                 </recipe-view>
+                <add-item-view v-else
+                    :is-submitting="isSubmitting"
+                    :post-message="postMessage"
+                    :post-error="postError"
+                    :api-configured="apiConfigured"
+                    @submit-item="postItem">
+                </add-item-view>
             </main>
             <footer class="page-footer mt-auto text-center small text-secondary py-4">
                 Lidt mere organiseret, én vare ad gangen.
@@ -50,8 +62,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./js/main.js"></script>
     <script src="./components/AppHeader.js"></script>
+    <script src="./components/RemoveItemModal.js"></script>
+    <script src="./components/EditItemModal.js"></script>
     <script src="./components/GroceryTable.js"></script>
     <script src="./components/RecipeView.js"></script>
+    <script src="./components/AddItemView.js"></script>
 
     <!-- Mount App -->
     <script>
