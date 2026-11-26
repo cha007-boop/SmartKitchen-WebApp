@@ -39,7 +39,7 @@ const app = Vue.createApp({
         // Fetch items using the current filters and sort order.
         getAll() {
             if (!baseURL) {
-                this.errorMessage = 'The grocery API URL has not been configured yet.'
+                this.errorMessage = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
                 return
             }
 
@@ -65,7 +65,7 @@ const app = Vue.createApp({
                 .then((response) => {
                     console.log('Post method called')
                     this.list.push(response.data)
-                    this.postMessage = 'Item added successfully.'
+                    this.postMessage = 'Varen blev tilføjet.'
                     this.newItem = {
 
                     }
@@ -123,7 +123,7 @@ const app = Vue.createApp({
                     }
                     this.editingId = null
                     this.editItem = null
-                    this.updateMessage = 'Item updated successfully.'
+                    this.updateMessage = 'Varen blev opdateret.'
                     this.getAll()
                 })
                 .catch((error) => {
@@ -133,12 +133,7 @@ const app = Vue.createApp({
                     this.isUpdating = false
                 })
         },
-        // Select an item and show the Bootstrap deletion confirmation.
-        openDeleteModal(item) {
-            this.deleteTarget = item
-            this.deleteError = ''
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteModal')).show()
-        },
+
         // Delete the confirmed item with a DELETE request
         deleteItem() {
             const item = this.deleteTarget
@@ -175,7 +170,7 @@ const app = Vue.createApp({
             if (responseData && typeof responseData === 'object') {
                 return JSON.stringify(responseData)
             }
-            return error.message || 'The request failed.'
+            return error.message || 'Forespørgslen mislykkedes.'
         },
     },
     computed: {

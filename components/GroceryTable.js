@@ -15,14 +15,14 @@ app.component('grocery-table', {
     },
     template:
         /*html*/
-        `<section class="grocery-card card shadow-sm border-0 overflow-hidden" aria-label="Groceries">
+        `<section class="grocery-card card shadow-sm border-0 overflow-hidden" aria-label="Indkøb">
             <div class="card-heading card-body d-flex justify-content-between align-items-center gap-3">
                 <div>
-                    <h2 class="h5 mb-1">All groceries</h2>
-                    <p class="small text-secondary mb-0">Items currently in your kitchen</p>
+                    <h2 class="h5 mb-1">Alle varer</h2>
+                    <p class="small text-secondary mb-0">Varer, der i øjeblikket er i dit køkken</p>
                 </div>
                 <span class="item-count badge rounded-pill text-bg-success-subtle">
-                    {{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}
+                    {{ items.length }} {{ items.length === 1 ? 'vare' : 'varer' }}
                 </span>
             </div>
 
@@ -37,10 +37,10 @@ app.component('grocery-table', {
                     <thead class="table-light">
                         <tr>
                             <th scope="col" class="small text-uppercase text-secondary">ID</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Name</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Barcode</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Ingredient</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Quantity</th>
+                            <th scope="col" class="small text-uppercase text-secondary">Navn</th>
+                            <th scope="col" class="small text-uppercase text-secondary">Stregkode</th>
+                            <th scope="col" class="small text-uppercase text-secondary">Ingrediens</th>
+                            <th scope="col" class="small text-uppercase text-secondary">Antal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,9 +58,9 @@ app.component('grocery-table', {
                         <tr v-if="items.length === 0">
                             <td colspan="5" class="empty-state text-center py-5">
                                 <span class="empty-icon d-block fs-3 text-success" aria-hidden="true">+</span>
-                                <strong class="d-block">No groceries yet</strong>
+                                <strong class="d-block">Ingen varer endnu</strong>
                                 <span class="d-block small text-secondary mt-1">
-                                    Your grocery list will appear here once connected.
+                                    Din indkøbsliste vises her, når forbindelsen er oprettet.
                                 </span>
                             </td>
                         </tr>
