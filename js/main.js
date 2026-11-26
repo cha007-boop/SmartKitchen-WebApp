@@ -1,10 +1,10 @@
-const baseURL = ''
+const api = axios.create({ baseURL: 'https://smartkitchenapi20261123093015-g3hmc6hgasf9esh2.italynorth-01.azurewebsites.net/api/groceries' })
 
 const app = Vue.createApp({
     data() {
         return {
             currentView: 'groceries',
-            apiConfigured: Boolean(baseURL),
+            apiConfigured: Boolean(api.defaults.baseURL),
             groceryList: [],
             ingredientList: [],
             recipeList: [],
@@ -38,20 +38,14 @@ const app = Vue.createApp({
     methods: {
         // Fetch items using the current filters and sort order.
         getAll() {
-            if (!baseURL) {
-                this.errorMessage = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
-                return
-            }
-
-            axios
-                .get(baseURL)
+                api.get('')
                 .then((response) => {
-                    this.list = response.data
+                    this.groceryList = response.data
                     this.errorMessage = ''
                 })
                 .catch((error) => {
                     console.log(error)
-                    this.list = []
+                    this.groceryList = []
                     this.errorMessage = this.getRequestErrorMessage(error)
                 })
         },
@@ -64,7 +58,7 @@ const app = Vue.createApp({
                 .post(baseURL, this.newItem)
                 .then((response) => {
                     console.log('Post method called')
-                    this.list.push(response.data)
+                    this.groceryList.push(response.data)
                     this.postMessage = 'Varen blev tilføjet.'
                     this.newItem = {
 
@@ -111,10 +105,10 @@ const app = Vue.createApp({
                 .put(baseURL + id, updatedItem)
                 .then((response) => {
                     // Update the local list with the new values, using the response data if available.
-                    const index = this.list.findIndex((item) => item.id === id)
+                    const index = this.groceryList.findIndex((item) => item.id === id)
                     if (index !== -1) {
-                        this.list.splice(index, 1, {
-                            ...this.list[index],
+                        this.groceryList.splice(index, 1, {
+                            ...this.groceryList[index],
                             ...(response.data && typeof response.data === 'object'
                                 ? response.data
                                 : updatedItem),
@@ -144,10 +138,9 @@ const app = Vue.createApp({
             this.deletingId = item.id
             this.deleteError = ''
 
-            axios
-                .delete(baseURL + item.id)
+                api.delete("/" + item.id)
                 .then(() => {
-                    this.list = this.list.filter((item) => item.id !== item.id)
+                    this.groceryList = this.groceryList.filter((item) => item.id !== item.id)
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteModal')).hide()
                     this.deleteTarget = null
                 })
