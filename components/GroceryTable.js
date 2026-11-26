@@ -1,4 +1,6 @@
 app.component('grocery-table', {
+    emits: 
+        ['delete-item'],
     props: {
         items: {
             type: Array,
@@ -35,36 +37,41 @@ app.component('grocery-table', {
             <div class="grocery-table-wrap table-responsive border-top">
                 <table class="grocery-table table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="small text-uppercase text-secondary">ID</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Navn</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Stregkode</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Ingrediens</th>
-                            <th scope="col" class="small text-uppercase text-secondary">Antal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in items" :key="item.id">
-                            <td class="text-secondary">{{ item.id }}</td>
-                            <td class="fw-semibold">{{ item.name }}</td>
-                            <td>{{ item.barcode }}</td>
-                            <td>
-                                <span class="ingredient-tag badge rounded-pill text-bg-success-subtle">
-                                    {{ item.ingredient }}
-                                </span>
-                            </td>
-                            <td>{{ item.quantity }}</td>
-                        </tr>
-                        <tr v-if="items.length === 0">
-                            <td colspan="5" class="empty-state text-center py-5">
-                                <span class="empty-icon d-block fs-3 text-success" aria-hidden="true">+</span>
-                                <strong class="d-block">Ingen varer endnu</strong>
-                                <span class="d-block small text-secondary mt-1">
-                                    Din indkøbsliste vises her, når forbindelsen er oprettet.
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
+    <tr>
+        <th scope="col" class="small text-uppercase text-secondary">ID</th>
+        <th scope="col" class="small text-uppercase text-secondary">Navn</th>
+        <th scope="col" class="small text-uppercase text-secondary">Stregkode</th>
+        <th scope="col" class="small text-uppercase text-secondary">Ingrediens</th>
+        <th scope="col" class="small text-uppercase text-secondary">Antal</th>
+        <th scope="col"></th>
+    </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in items" :key="item.id">
+                    <td class="text-secondary">{{ item.id }}</td>
+                    <td class="fw-semibold">{{ item.name }}</td>
+                    <td>{{ item.barcode }}</td>
+                    <td>
+                        <span class="ingredient-tag badge rounded-pill text-bg-success-subtle">
+                            {{ item.ingredient }}
+                        </span>
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-danger btn-sm" aria-label="Slet vare"
+                            @click="$emit('delete-item', item)">-</button>
+                    </td>
+                </tr>
+                <tr v-if="items.length === 0">
+                    <td colspan="6" class="empty-state text-center py-5">
+                        <span class="empty-icon d-block fs-3 text-success" aria-hidden="true">+</span>
+                        <strong class="d-block">Ingen varer endnu</strong>
+                        <span class="d-block small text-secondary mt-1">
+                            Din indkøbsliste vises her, når forbindelsen er oprettet.
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
                 </table>
             </div>
         </section>`,

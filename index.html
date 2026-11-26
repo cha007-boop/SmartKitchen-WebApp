@@ -36,7 +36,7 @@
                 </section>
 
                 <grocery-table v-if="currentView === 'groceries'" :items="groceryList" :error-message="errorMessage"
-                    :api-configured="apiConfigured">
+                    :api-configured="apiConfigured" @delete-item="deleteTarget = $event; deleteItem()">
                 </grocery-table>
                 <recipe-view v-else :recipes="recipeList" :error-message="errorMessage" :api-configured="apiConfigured">
                 </recipe-view>

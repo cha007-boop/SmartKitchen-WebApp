@@ -138,10 +138,14 @@ const app = Vue.createApp({
             this.deletingId = item.id
             this.deleteError = ''
 
-                api.delete("/" + item.id)
+                api.delete('/' + item.id)
                 .then(() => {
-                    this.groceryList = this.groceryList.filter((item) => item.id !== item.id)
-                    bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteModal')).hide()
+                    if (item.quantity > 1) {
+                        const row = this.groceryList.find((g) => g.id === item.id)
+                        row.quantity -= 1
+                    } else {
+                        this.groceryList = this.groceryList.filter((g) => g.id !== item.id)
+                    }
                     this.deleteTarget = null
                 })
                 .catch((error) => {
@@ -150,20 +154,6 @@ const app = Vue.createApp({
                 .finally(() => {
                     this.deletingId = null
                 })
-        },
-        // Extract a readable message from an Axios error.
-        getRequestErrorMessage(error) {
-            const responseData = error.response?.data
-            if (typeof responseData === 'string') {
-                return responseData
-            }
-            if (responseData?.title || responseData?.message) {
-                return responseData.title || responseData.message
-            }
-            if (responseData && typeof responseData === 'object') {
-                return JSON.stringify(responseData)
-            }
-            return error.message || 'Forespørgslen mislykkedes.'
         },
     },
     computed: {
