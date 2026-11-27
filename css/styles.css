@@ -114,12 +114,59 @@ body {
 }
 
 .grocery-card,
-.recipes-placeholder {
+.recipe-browser,
+.add-item-card {
     overflow: hidden;
     border: 1px solid #e8ebe4 !important;
     border-radius: 14px;
     background: #fff;
     box-shadow: 0 8px 26px rgba(42, 59, 45, 0.05) !important;
+}
+
+.add-item-card .card-heading {
+    border-bottom: 1px solid #edf0ea;
+}
+
+.add-item-form .form-label {
+    color: #536157;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.add-item-form .form-control {
+    min-height: 44px;
+    border-color: #dde4da;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.add-item-form .form-control:focus {
+    border-color: #89a67a;
+    box-shadow: 0 0 0 3px rgba(137, 166, 122, 0.16);
+}
+
+.grocery-card .btn-outline-danger {
+    --bs-btn-color: #a85b4f;
+    --bs-btn-border-color: #dfc6c0;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #a85b4f;
+    --bs-btn-hover-border-color: #a85b4f;
+    --bs-btn-active-bg: #964c41;
+    --bs-btn-active-border-color: #964c41;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.grocery-card .btn-outline-secondary {
+    --bs-btn-color: #617064;
+    --bs-btn-border-color: #dce3d8;
+    --bs-btn-hover-color: #315d43;
+    --bs-btn-hover-bg: #f1f5ee;
+    --bs-btn-hover-border-color: #cbd7c5;
+    --bs-btn-active-bg: #e7ede3;
+    --bs-btn-active-border-color: #cbd7c5;
+    font-size: 12px;
+    font-weight: 650;
 }
 
 .card-heading {
@@ -128,8 +175,7 @@ body {
     gap: 16px;
 }
 
-.card-heading h2,
-.recipes-placeholder h2 {
+.card-heading h2 {
     margin: 0;
     color: #2d3b32;
     font-size: 15px;
@@ -263,34 +309,15 @@ body {
     font-size: 12px !important;
 }
 
-.recipes-placeholder {
-    min-height: 270px;
-    padding: 48px 24px !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+.recipe-result {
+    border-color: #e8ebe4;
+    border-radius: 10px;
 }
 
-.recipe-icon {
-    width: 42px;
-    height: 42px;
-    margin-bottom: 15px !important;
-    display: grid;
-    place-items: center;
-    border-radius: 13px !important;
-    background: #f1f5ee !important;
-    color: #668457 !important;
-    font-size: 22px;
-}
-
-.recipes-placeholder p {
-    max-width: 400px;
-    margin: 8px 0 0;
-    color: #818c83 !important;
-    font-size: 13px;
-    line-height: 1.6;
+.recipe-filters .form-label {
+    color: #536157;
+    font-size: 12px;
+    font-weight: 650;
 }
 
 .page-footer {

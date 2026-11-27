@@ -1,4 +1,4 @@
-const baseURL = ''
+const baseURL = 'https://smartkitchenapi20261123093015-g3hmc6hgasf9esh2.italynorth-01.azurewebsites.net/api/groceries'
 
 const app = Vue.createApp({
     data() {
@@ -7,7 +7,45 @@ const app = Vue.createApp({
             apiConfigured: Boolean(baseURL),
             groceryList: [],
             ingredientList: [],
-            recipeList: [],
+            recipeList: [
+                {
+                    id: 1,
+                    name: 'Bagt tomatpasta',
+                    type: 'Aftensmad',
+                    ingredients: ['pasta', 'tomat', 'hvidløg', 'spinat'],
+                },
+                {
+                    id: 2,
+                    name: 'Kikærtewrap',
+                    type: 'Frokost',
+                    ingredients: ['tortilla', 'kikærter', 'agurk', 'tomat'],
+                },
+                {
+                    id: 3,
+                    name: 'Havregrød med æble',
+                    type: 'Morgenmad',
+                    ingredients: ['havregryn', 'mælk', 'æble', 'kanel'],
+                },
+                {
+                    id: 4,
+                    name: 'Tomatsuppe',
+                    type: 'Frokost',
+                    ingredients: ['tomat', 'løg', 'grøntsagsbouillon'],
+                },
+                {
+                    id: 5,
+                    name: 'Ovnbagte rodfrugter',
+                    type: 'Aftensmad',
+                    ingredients: ['kartoffel', 'gulerod', 'rødløg'],
+                },
+                {
+                    id: 6,
+                    name: 'Bananpandekager',
+                    type: 'Morgenmad',
+                    ingredients: ['banan', 'æg', 'havregryn'],
+                },
+            ],
+            recipeDataIsDemo: true,
             newItem: {
                 id: null,
                 name: '',
@@ -25,6 +63,10 @@ const app = Vue.createApp({
             updateMessage: '',
             updateError: '',
             deleteError: '',
+            isRemoving: false,
+            removeError: '',
+            removeCompleted: 0,
+            editCompleted: 0,
             isSubmitting: false,
             postMessage: '',
             postError: '',
@@ -46,36 +88,73 @@ const app = Vue.createApp({
             axios
                 .get(baseURL)
                 .then((response) => {
-                    this.list = response.data
+                    this.groceryList = response.data.filter((item) => Number(item.quantity) > 0)
                     this.errorMessage = ''
                 })
                 .catch((error) => {
                     console.log(error)
-                    this.list = []
+                    this.groceryList = []
                     this.errorMessage = this.getRequestErrorMessage(error)
                 })
         },
         // Create an item and reset the form after success.
-        postItem() {
+        postItem(item) {
+            if (!baseURL) {
+                this.postError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                return
+            }
+
+            const request = {
+                name: item.name.trim(),
+                ingredient: item.ingredient.trim(),
+                quantity: Number(item.quantity),
+            }
+            this.newItem = { ...this.newItem, ...request }
             this.isSubmitting = true
             this.postMessage = ''
             this.postError = ''
             axios
-                .post(baseURL, this.newItem)
+                .post(`${baseURL.replace(/\/+$/, '')}/Manuel`, request)
                 .then((response) => {
-                    console.log('Post method called')
-                    this.list.push(response.data)
-                    this.postMessage = 'Varen blev tilføjet.'
-                    this.newItem = {
-
+                    if (!response.data) {
+                        this.postError = 'API’et returnerede ikke en vare. Kontrollér oplysningerne, og prøv igen.'
+                        return
                     }
+                    this.completePostItem(response, 'Varen blev tilføjet.')
                 })
                 .catch((error) => {
-                    this.postError = this.getRequestErrorMessage(error)
+                    this.postError = error.response?.status === 404
+                        ? 'Varen blev ikke fundet. Kontrollér navn og ingrediens. Den blev ikke tilføjet.'
+                        : this.getRequestErrorMessage(error)
                 })
                 .finally(() => {
                     this.isSubmitting = false
                 })
+        },
+        completePostItem(response, message) {
+            if (response.data) {
+                const hasId = response.data.id !== undefined && response.data.id !== null
+                const index = hasId
+                    ? this.groceryList.findIndex((item) => item.id === response.data.id)
+                    : -1
+                if (Number(response.data.quantity) > 0) {
+                    if (index === -1) {
+                        this.groceryList.push(response.data)
+                    } else {
+                        this.groceryList.splice(index, 1, response.data)
+                    }
+                } else if (index !== -1) {
+                    this.groceryList.splice(index, 1)
+                }
+            }
+            this.postMessage = message
+            this.newItem = {
+                id: null,
+                name: '',
+                barcode: '',
+                ingredient: '',
+                quantity: 0,
+            }
         },
         // Copy a Item's values into the inline editor.
         startEdit(item) {
@@ -111,10 +190,10 @@ const app = Vue.createApp({
                 .put(baseURL + id, updatedItem)
                 .then((response) => {
                     // Update the local list with the new values, using the response data if available.
-                    const index = this.list.findIndex((item) => item.id === id)
+                    const index = this.groceryList.findIndex((item) => item.id === id)
                     if (index !== -1) {
-                        this.list.splice(index, 1, {
-                            ...this.list[index],
+                        this.groceryList.splice(index, 1, {
+                            ...this.groceryList[index],
                             ...(response.data && typeof response.data === 'object'
                                 ? response.data
                                 : updatedItem),
@@ -133,6 +212,114 @@ const app = Vue.createApp({
                     this.isUpdating = false
                 })
         },
+        updateGroceryItem({ item, name, ingredient, quantity }) {
+            const updatedQuantity = Number(quantity)
+            if (!name || !name.trim() || !ingredient || !ingredient.trim()) {
+                this.updateError = 'Navn og ingrediens skal udfyldes.'
+                return
+            }
+            if (!Number.isInteger(updatedQuantity) || updatedQuantity < 0) {
+                this.updateError = 'Mængden skal være et helt tal på 0 eller større.'
+                return
+            }
+            if (!baseURL) {
+                this.updateError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                return
+            }
+
+            const updatedItem = {
+                ...item,
+                name: name.trim(),
+                ingredient: ingredient.trim(),
+                quantity: updatedQuantity,
+            }
+
+            this.isUpdating = true
+            this.updateError = ''
+            axios
+                .put(baseURL + item.id, updatedItem)
+                .then((response) => {
+                    if (updatedQuantity === 0) {
+                        this.groceryList = this.groceryList.filter((grocery) => grocery.id !== item.id)
+                    } else {
+                        const index = this.groceryList.findIndex((grocery) => grocery.id === item.id)
+                        if (index !== -1) {
+                            this.groceryList.splice(index, 1, {
+                                ...this.groceryList[index],
+                                ...(response.data && typeof response.data === 'object'
+                                    ? response.data
+                                    : updatedItem),
+                            })
+                        }
+                    }
+                    this.editCompleted += 1
+                })
+                .catch((error) => {
+                    this.updateError = this.getRequestErrorMessage(error)
+                })
+                .finally(() => {
+                    this.isUpdating = false
+                })
+        },
+        removeItem({ item, amount }) {
+            if (!item || amount === null || amount === undefined) {
+                return
+            }
+
+            const removeAmount = Number(amount)
+            const currentQuantity = Number(item.quantity)
+            if (!Number.isInteger(removeAmount) || removeAmount < 1 || removeAmount > currentQuantity) {
+                this.removeError = `Angiv et antal mellem 1 og ${currentQuantity}.`
+                return
+            }
+
+            if (!baseURL) {
+                this.removeError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                return
+            }
+
+            const remainingQuantity = currentQuantity - removeAmount
+            this.isRemoving = true
+            this.removeError = ''
+
+            if (remainingQuantity === 0) {
+                axios
+                    .put(baseURL + item.id, { ...item, quantity: 0 })
+                    .then((response) => {
+                        this.groceryList = this.groceryList.filter((grocery) => grocery.id !== item.id)
+                        this.removeCompleted += 1
+                    })
+                    .catch((error) => {
+                        this.removeError = this.getRequestErrorMessage(error)
+                    })
+                    .finally(() => {
+                        this.isRemoving = false
+                    })
+                return
+            }
+
+            const updatedItem = { ...item, quantity: remainingQuantity }
+            axios
+                .put(baseURL + item.id, updatedItem)
+                .then((response) => {
+                    const index = this.groceryList.findIndex((grocery) => grocery.id === item.id)
+                    if (index !== -1) {
+                        this.groceryList.splice(index, 1, {
+                            ...this.groceryList[index],
+                            ...(response.data && typeof response.data === 'object'
+                                ? response.data
+                                : updatedItem),
+                        })
+                    }
+                    this.removeCompleted += 1
+                })
+                .catch((error) => {
+                    this.removeError = this.getRequestErrorMessage(error)
+                })
+                .finally(() => {
+                    this.isRemoving = false
+                })
+        },
 
         // Delete the confirmed item with a DELETE request
         deleteItem() {
@@ -147,7 +334,7 @@ const app = Vue.createApp({
             axios
                 .delete(baseURL + item.id)
                 .then(() => {
-                    this.list = this.list.filter((item) => item.id !== item.id)
+                    this.groceryList = this.groceryList.filter((grocery) => grocery.id !== item.id)
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteModal')).hide()
                     this.deleteTarget = null
                 })

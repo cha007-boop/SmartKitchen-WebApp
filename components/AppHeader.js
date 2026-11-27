@@ -31,6 +31,14 @@ app.component('app-header', {
                     @click="$emit('view-change', 'recipes')">
                     Opskrifter
                 </button>
+                <button
+                    type="button"
+                    class="view-button btn btn-outline-success"
+                    :class="{ active: currentView === 'add' }"
+                    :aria-pressed="currentView === 'add'"
+                    @click="$emit('view-change', 'add')">
+                    Tilføj vare
+                </button>
             </nav>
         </header>`,
 })
