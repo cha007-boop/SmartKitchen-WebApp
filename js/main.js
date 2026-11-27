@@ -49,6 +49,20 @@ const app = Vue.createApp({
                     this.errorMessage = this.getRequestErrorMessage(error)
                 })
         },
+        // Add one more of the clicked item
+        add(item) {
+            api.put('/' + item.id + '/add')
+                .then((response) => {
+                    const row = this.groceryList.find((g) => g.id === item.id)
+                    if (row) {
+                        row.quantity = response.data.quantity
+                    }
+                    this.errorMessage = ''
+                })
+                .catch((error) => {
+                    this.errorMessage = this.getRequestErrorMessage(error)
+                })
+        },
         // Create an item and reset the form after success.
         postItem() {
             this.isSubmitting = true
@@ -140,11 +154,9 @@ const app = Vue.createApp({
 
                 api.delete('/' + item.id)
                 .then(() => {
-                    if (item.quantity > 1) {
-                        const row = this.groceryList.find((g) => g.id === item.id)
+                    const row = this.groceryList.find((g) => g.id === item.id)
+                    if (row && row.quantity > 0) {
                         row.quantity -= 1
-                    } else {
-                        this.groceryList = this.groceryList.filter((g) => g.id !== item.id)
                     }
                     this.deleteTarget = null
                 })
@@ -154,6 +166,20 @@ const app = Vue.createApp({
                 .finally(() => {
                     this.deletingId = null
                 })
+        },
+        // Extract a readable message from an Axios error.
+        getRequestErrorMessage(error) {
+            const responseData = error.response?.data
+            if (typeof responseData === 'string') {
+                return responseData
+            }
+            if (responseData?.title || responseData?.message) {
+                return responseData.title || responseData.message
+            }
+            if (responseData && typeof responseData === 'object') {
+                return JSON.stringify(responseData)
+            }
+            return error.message || 'Forespørgslen mislykkedes.'
         },
     },
     computed: {

@@ -1,6 +1,5 @@
 app.component('grocery-table', {
-    emits: 
-        ['delete-item'],
+    emits: ['delete-item', 'add-item'],
     props: {
         items: {
             type: Array,
@@ -15,6 +14,12 @@ app.component('grocery-table', {
             required: true,
         },
     },
+    computed: {
+        // Only groceries that are actually in the kitchen (quantity above 0)
+        visibleItems() {
+            return this.items.filter((item) => item.quantity > 0)
+        },
+    },
     template:
         /*html*/
         `<section class="grocery-card card shadow-sm border-0 overflow-hidden" aria-label="Indkøb">
@@ -24,7 +29,7 @@ app.component('grocery-table', {
                     <p class="small text-secondary mb-0">Varer, der i øjeblikket er i dit køkken</p>
                 </div>
                 <span class="item-count badge rounded-pill text-bg-success-subtle">
-                    {{ items.length }} {{ items.length === 1 ? 'vare' : 'varer' }}
+                    {{ visibleItems.length }} {{ visibleItems.length === 1 ? 'vare' : 'varer' }}
                 </span>
             </div>
 
@@ -47,7 +52,7 @@ app.component('grocery-table', {
     </tr>
             </thead>
             <tbody>
-                <tr v-for="item in items" :key="item.id">
+                <tr v-for="item in visibleItems" :key="item.id">
                     <td class="text-secondary">{{ item.id }}</td>
                     <td class="fw-semibold">{{ item.name }}</td>
                     <td>{{ item.barcode }}</td>
@@ -58,11 +63,13 @@ app.component('grocery-table', {
                     </td>
                     <td>{{ item.quantity }}</td>
                     <td class="text-end">
+                        <button type="button" class="btn btn-success btn-sm me-1" aria-label="Tilføj vare"
+                            @click="$emit('add-item', item)">+</button>
                         <button type="button" class="btn btn-danger btn-sm" aria-label="Slet vare"
                             @click="$emit('delete-item', item)">-</button>
                     </td>
                 </tr>
-                <tr v-if="items.length === 0">
+                <tr v-if="visibleItems.length === 0">
                     <td colspan="6" class="empty-state text-center py-5">
                         <span class="empty-icon d-block fs-3 text-success" aria-hidden="true">+</span>
                         <strong class="d-block">Ingen varer endnu</strong>
