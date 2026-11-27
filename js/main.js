@@ -1,4 +1,13 @@
-const baseURL = 'https://smartkitchenapi20261123093015-g3hmc6hgasf9esh2.italynorth-01.azurewebsites.net/api/groceries/'
+const baseURL = "https://smartkitchenapi20261123093015-g3hmc6hgasf9esh2.italynorth-01.azurewebsites.net/api/groceries/"
+const translationCacheKey = 'ingredientTranslationsDa_v3'
+
+function loadCachedTranslations() {
+    try {
+        return JSON.parse(localStorage.getItem(translationCacheKey)) || {}
+    } catch (error) {
+        return {}
+    }
+}
 
 const app = Vue.createApp({
     data() {
@@ -6,6 +15,8 @@ const app = Vue.createApp({
             currentView: 'groceries',
             apiConfigured: Boolean(baseURL),
             groceryList: [],
+            translations: loadCachedTranslations(),
+            failedTranslations: {},
             ingredientList: [],
             recipeList: [
                 {
@@ -13,36 +24,48 @@ const app = Vue.createApp({
                     name: 'Bagt tomatpasta',
                     type: 'Aftensmad',
                     ingredients: ['pasta', 'tomat', 'hvidløg', 'spinat'],
+                    description: 'Varm ovnen op til 200 grader. Læg tomater og hele hvidløgsfed i et ovnfast fad, dryp med olivenolie, og bag dem i cirka 25 minutter, til tomaterne er bløde og begynder at sprække. Kog pastaen al dente i det mellemtid. Mos tomater og hvidløg let med en gaffel, så de danner en sauce. Vend den kogte pasta og en håndfuld spinat i saucen, til spinaten falder sammen. Smag til med salt og peber.',
+                    imageLink: 'https://cdn-free.tv2i.dk/l/e/g/legacy/2/3/9/239106ee-3c28-4f79-878a-441cac6d84ae?ixlib=js-3.8.0&w=624&h=351&q=45&auto=format&fit=crop&rect64=MCwwLDI3MTYsMTUyNQ&s=5707cdebb918268738e5eb9d1554597c',
                 },
                 {
                     id: 2,
                     name: 'Kikærtewrap',
                     type: 'Frokost',
                     ingredients: ['tortilla', 'kikærter', 'agurk', 'tomat'],
+                    description: 'Skyl kikærterne, og mos dem groft med en gaffel, så nogle stadig er hele. Krydr med salt, peber og gerne lidt spidskommen. Skær agurk og tomat i tern. Varm tortillaen kort på en tør pande, så den bliver blød. Fordel kikærtemosen på tortillaen, top med agurk og tomat, og rul den stramt sammen. Skær wrappen over på midten, og server den med det samme.',
+                    imageLink: 'https://cdn-free.tv2i.dk/l/e/g/legacy/2/3/9/239106ee-3c28-4f79-878a-441cac6d84ae?ixlib=js-3.8.0&w=624&h=351&q=45&auto=format&fit=crop&rect64=MCwwLDI3MTYsMTUyNQ&s=5707cdebb918268738e5eb9d1554597c',
                 },
                 {
                     id: 3,
                     name: 'Havregrød med æble',
                     type: 'Morgenmad',
                     ingredients: ['havregryn', 'mælk', 'æble', 'kanel'],
+                    description: 'Kom havregryn og mælk i en gryde, og bring det i kog under omrøring. Lad grøden simre i 5 minutter, til den er tyk og cremet. Riv eller skær æblet i små stykker, og rør det i grøden de sidste par minutter. Hæld grøden i en skål, og drys med kanel. Server den varm.',
+                    imageLink: 'https://cdn-free.tv2i.dk/l/e/g/legacy/2/3/9/239106ee-3c28-4f79-878a-441cac6d84ae?ixlib=js-3.8.0&w=624&h=351&q=45&auto=format&fit=crop&rect64=MCwwLDI3MTYsMTUyNQ&s=5707cdebb918268738e5eb9d1554597c',
                 },
                 {
                     id: 4,
                     name: 'Tomatsuppe',
                     type: 'Frokost',
                     ingredients: ['tomat', 'løg', 'grøntsagsbouillon'],
+                    description: 'Hak løget fint, og svits det i olie i en gryde, til det er blødt og klart. Tilsæt hakkede tomater og grøntsagsbouillon med vand efter anvisning på pakken. Lad suppen simre i 20 minutter. Blend den glat med en stavblender. Smag til med salt og peber, og server den gerne med et stykke brød.',
+                    imageLink: 'https://cdn-free.tv2i.dk/l/e/g/legacy/2/3/9/239106ee-3c28-4f79-878a-441cac6d84ae?ixlib=js-3.8.0&w=624&h=351&q=45&auto=format&fit=crop&rect64=MCwwLDI3MTYsMTUyNQ&s=5707cdebb918268738e5eb9d1554597c',
                 },
                 {
                     id: 5,
                     name: 'Ovnbagte rodfrugter',
                     type: 'Aftensmad',
                     ingredients: ['kartoffel', 'gulerod', 'rødløg'],
+                    description: 'Varm ovnen op til 200 grader. Skær kartofler og gulerødder i grove tern, og skær rødløget i både. Vend det hele med olivenolie, salt og peber, og fordel det i et enkelt lag på en bageplade. Bag i 35 til 40 minutter, og vend grøntsagerne halvvejs, så de bliver gyldne og møre på hele overfladen.',
+                    imageLink: 'https://cdn-free.tv2i.dk/l/e/g/legacy/2/3/9/239106ee-3c28-4f79-878a-441cac6d84ae?ixlib=js-3.8.0&w=624&h=351&q=45&auto=format&fit=crop&rect64=MCwwLDI3MTYsMTUyNQ&s=5707cdebb918268738e5eb9d1554597c',
                 },
                 {
                     id: 6,
                     name: 'Bananpandekager',
                     type: 'Morgenmad',
                     ingredients: ['banan', 'æg', 'havregryn'],
+                    description: 'Mos en moden banan i en skål, og pisk to æg i. Rør havregryn i, og lad dejen hvile i 5 minutter, så havregrynene suger lidt væske. Varm en pande op ved middel varme med lidt smør eller olie. Hæld små portioner dej på panden, og steg dem i cirka 2 minutter på hver side, til de er gyldne. Server dem med frugt eller honning.',
+                    imageLink: 'https://cdn-free.tv2i.dk/l/e/g/legacy/2/3/9/239106ee-3c28-4f79-878a-441cac6d84ae?ixlib=js-3.8.0&w=624&h=351&q=45&auto=format&fit=crop&rect64=MCwwLDI3MTYsMTUyNQ&s=5707cdebb918268738e5eb9d1554597c',
                 },
             ],
             recipeDataIsDemo: true,
@@ -74,14 +97,128 @@ const app = Vue.createApp({
 
         }
     },
+    created() {
+        // Plain (non-reactive) set that tracks translations currently being fetched
+        this.pendingTranslations = new Set()
+    },
     mounted() {
         this.getAll()
     },
+    watch: {
+        groceryList: {
+            deep: true,
+            handler() {
+                this.translateGroceries()
+            },
+        },
+    },
+    computed: {
+        // Same items as groceryList, plus ingredientDa (the Danish name) for display and comparison
+        translatedGroceryList() {
+            return this.groceryList.map((item) => {
+                const key = this.normalizeIngredient(item.ingredient)
+                let danish = this.translations[key]
+                if (!danish) {
+                    danish = this.failedTranslations[key] ? 'gorba' : '...'
+                }
+                return { ...item, ingredientDa: danish }
+            })
+        },
+        myComputed() {
+            return ''
+        },
+    },
     methods: {
+        normalizeIngredient(value) {
+            return String(value ?? '').trim().toLocaleLowerCase('da')
+        },
+        // Remove UI-only fields before sending an item to the API
+        toApiItem(item) {
+            const { ingredientDa, ...apiItem } = item
+            return apiItem
+        },
+        saveCachedTranslations() {
+            try {
+                localStorage.setItem(translationCacheKey, JSON.stringify(this.translations))
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        // Translation API 1: MyMemory
+        async translateWithMyMemory(name) {
+            const response = await axios.get('https://api.mymemory.translated.net/get', {
+                params: { q: name, langpair: 'en|da' },
+            })
+            const result = response.data
+            const text = result.responseData?.translatedText || ''
+            const isWarning = text.toUpperCase().includes('MYMEMORY WARNING')
+            if (Number(result.responseStatus) === 200 && text && isWarning == false) {
+                return text
+            }
+            console.log('MyMemory did not return a usable translation for', name, result)
+            return null
+        },
+        // Translation API 2 (fallback): Google's public translate endpoint, no key needed
+        async translateWithGoogle(name) {
+            const response = await axios.get('https://translate.googleapis.com/translate_a/single', {
+                params: { client: 'gtx', sl: 'en', tl: 'da', dt: 't', q: name },
+            })
+            return response.data?.[0]?.[0]?.[0] || null
+        },
+        // Translate each stored ingredient from English to Danish once, then cache it in localStorage.
+        // If both APIs fail, the ingredient is marked as failed and shows "gorba".
+        async translateGroceries() {
+            const missing = [...new Set(
+                this.groceryList
+                    .map((item) => this.normalizeIngredient(item.ingredient))
+                    .filter((name) => name
+                        && !this.translations[name]
+                        && !this.pendingTranslations.has(name))
+            )]
+
+            for (const name of missing) {
+                this.pendingTranslations.add(name)
+                try {
+                    let translated = null
+
+                    try {
+                        translated = await this.translateWithMyMemory(name)
+                    } catch (error) {
+                        console.log('MyMemory request failed for', name, error)
+                    }
+
+                    // Try the second API if the first failed or just returned the same word
+                    if (!translated || this.normalizeIngredient(translated) === name) {
+                        try {
+                            const fallback = await this.translateWithGoogle(name)
+                            if (fallback) {
+                                translated = fallback
+                            }
+                        } catch (error) {
+                            console.log('Fallback translation request failed for', name, error)
+                        }
+                    }
+
+                    if (translated) {
+                        const { [name]: removed, ...stillFailed } = this.failedTranslations
+                        this.failedTranslations = stillFailed
+                        this.translations = {
+                            ...this.translations,
+                            [name]: this.normalizeIngredient(translated),
+                        }
+                        this.saveCachedTranslations()
+                    } else {
+                        this.failedTranslations = { ...this.failedTranslations, [name]: true }
+                    }
+                } finally {
+                    this.pendingTranslations.delete(name)
+                }
+            }
+        },
         // Fetch items using the current filters and sort order.
         getAll() {
             if (!baseURL) {
-                this.errorMessage = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                this.errorMessage = "URL-adressen til SmartKitchen-API'en er endnu ikke konfigureret."
                 return
             }
 
@@ -100,7 +237,7 @@ const app = Vue.createApp({
         // Create an item and reset the form after success.
         postItem(item) {
             if (!baseURL) {
-                this.postError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                this.postError = "URL-adressen til SmartKitchen-API'en er endnu ikke konfigureret."
                 return
             }
 
@@ -117,7 +254,7 @@ const app = Vue.createApp({
                 .post(`${baseURL.replace(/\/+$/, '')}/Manuel`, request)
                 .then((response) => {
                     if (!response.data) {
-                        this.postError = 'API’et returnerede ikke en vare. Kontrollér oplysningerne, og prøv igen.'
+                        this.postError = "API'et returnerede ikke en vare. Kontrollér oplysningerne, og prøv igen."
                         return
                     }
                     this.completePostItem(response, 'Varen blev tilføjet.')
@@ -223,12 +360,12 @@ const app = Vue.createApp({
                 return
             }
             if (!baseURL) {
-                this.updateError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                this.updateError = "URL-adressen til SmartKitchen-API'en er endnu ikke konfigureret."
                 return
             }
 
             const updatedItem = {
-                ...item,
+                ...this.toApiItem(item),
                 name: name.trim(),
                 ingredient: ingredient.trim(),
                 quantity: updatedQuantity,
@@ -274,7 +411,7 @@ const app = Vue.createApp({
             }
 
             if (!baseURL) {
-                this.removeError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
+                this.removeError = "URL-adressen til SmartKitchen-API'en er endnu ikke konfigureret."
                 return
             }
 
@@ -284,7 +421,7 @@ const app = Vue.createApp({
 
             if (remainingQuantity === 0) {
                 axios
-                    .put(baseURL + item.id, { ...item, quantity: 0 })
+                    .put(baseURL + item.id, { ...this.toApiItem(item), quantity: 0 })
                     .then((response) => {
                         this.groceryList = this.groceryList.filter((grocery) => grocery.id !== item.id)
                         this.removeCompleted += 1
@@ -298,7 +435,7 @@ const app = Vue.createApp({
                 return
             }
 
-            const updatedItem = { ...item, quantity: remainingQuantity }
+            const updatedItem = { ...this.toApiItem(item), quantity: remainingQuantity }
             axios
                 .put(baseURL + item.id, updatedItem)
                 .then((response) => {
@@ -360,9 +497,4 @@ const app = Vue.createApp({
             return error.message || 'Forespørgslen mislykkedes.'
         },
     },
-    computed: {
-        myComputed() {
-            return ''
-        },
-    }
 })
