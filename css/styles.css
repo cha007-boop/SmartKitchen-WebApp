@@ -114,7 +114,7 @@ body {
 }
 
 .grocery-card,
-.recipes-placeholder,
+.recipe-browser,
 .add-item-card {
     overflow: hidden;
     border: 1px solid #e8ebe4 !important;
@@ -175,8 +175,7 @@ body {
     gap: 16px;
 }
 
-.card-heading h2,
-.recipes-placeholder h2 {
+.card-heading h2 {
     margin: 0;
     color: #2d3b32;
     font-size: 15px;
@@ -310,34 +309,15 @@ body {
     font-size: 12px !important;
 }
 
-.recipes-placeholder {
-    min-height: 270px;
-    padding: 48px 24px !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+.recipe-result {
+    border-color: #e8ebe4;
+    border-radius: 10px;
 }
 
-.recipe-icon {
-    width: 42px;
-    height: 42px;
-    margin-bottom: 15px !important;
-    display: grid;
-    place-items: center;
-    border-radius: 13px !important;
-    background: #f1f5ee !important;
-    color: #668457 !important;
-    font-size: 22px;
-}
-
-.recipes-placeholder p {
-    max-width: 400px;
-    margin: 8px 0 0;
-    color: #818c83 !important;
-    font-size: 13px;
-    line-height: 1.6;
+.recipe-filters .form-label {
+    color: #536157;
+    font-size: 12px;
+    font-weight: 650;
 }
 
 .page-footer {

@@ -7,7 +7,45 @@ const app = Vue.createApp({
             apiConfigured: Boolean(baseURL),
             groceryList: [],
             ingredientList: [],
-            recipeList: [],
+            recipeList: [
+                {
+                    id: 1,
+                    name: 'Bagt tomatpasta',
+                    type: 'Aftensmad',
+                    ingredients: ['pasta', 'tomat', 'hvidløg', 'spinat'],
+                },
+                {
+                    id: 2,
+                    name: 'Kikærtewrap',
+                    type: 'Frokost',
+                    ingredients: ['tortilla', 'kikærter', 'agurk', 'tomat'],
+                },
+                {
+                    id: 3,
+                    name: 'Havregrød med æble',
+                    type: 'Morgenmad',
+                    ingredients: ['havregryn', 'mælk', 'æble', 'kanel'],
+                },
+                {
+                    id: 4,
+                    name: 'Tomatsuppe',
+                    type: 'Frokost',
+                    ingredients: ['tomat', 'løg', 'grøntsagsbouillon'],
+                },
+                {
+                    id: 5,
+                    name: 'Ovnbagte rodfrugter',
+                    type: 'Aftensmad',
+                    ingredients: ['kartoffel', 'gulerod', 'rødløg'],
+                },
+                {
+                    id: 6,
+                    name: 'Bananpandekager',
+                    type: 'Morgenmad',
+                    ingredients: ['banan', 'æg', 'havregryn'],
+                },
+            ],
+            recipeDataIsDemo: true,
             newItem: {
                 id: null,
                 name: '',
@@ -61,41 +99,62 @@ const app = Vue.createApp({
         },
         // Create an item and reset the form after success.
         postItem(item) {
-            const newItem = { ...item }
-            if (!newItem.barcode || (typeof newItem.barcode === 'string' && !newItem.barcode.trim())) {
-                delete newItem.barcode
-            }
-            this.newItem = newItem
             if (!baseURL) {
                 this.postError = 'URL-adressen til SmartKitchen-API’en er endnu ikke konfigureret.'
                 return
             }
 
+            const request = {
+                name: item.name.trim(),
+                ingredient: item.ingredient.trim(),
+                quantity: Number(item.quantity),
+            }
+            this.newItem = { ...this.newItem, ...request }
             this.isSubmitting = true
             this.postMessage = ''
             this.postError = ''
             axios
-                .post(baseURL, this.newItem)
+                .post(`${baseURL.replace(/\/+$/, '')}/Manuel`, request)
                 .then((response) => {
-                    console.log('Post method called')
-                    if (response.data && Number(response.data.quantity) > 0) {
-                        this.groceryList.push(response.data)
+                    if (!response.data) {
+                        this.postError = 'API’et returnerede ikke en vare. Kontrollér oplysningerne, og prøv igen.'
+                        return
                     }
-                    this.postMessage = 'Varen blev tilføjet.'
-                    this.newItem = {
-                        id: null,
-                        name: '',
-                        barcode: '',
-                        ingredient: '',
-                        quantity: 0,
-                    }
+                    this.completePostItem(response, 'Varen blev tilføjet.')
                 })
                 .catch((error) => {
-                    this.postError = this.getRequestErrorMessage(error)
+                    this.postError = error.response?.status === 404
+                        ? 'Varen blev ikke fundet. Kontrollér navn og ingrediens. Den blev ikke tilføjet.'
+                        : this.getRequestErrorMessage(error)
                 })
                 .finally(() => {
                     this.isSubmitting = false
                 })
+        },
+        completePostItem(response, message) {
+            if (response.data) {
+                const hasId = response.data.id !== undefined && response.data.id !== null
+                const index = hasId
+                    ? this.groceryList.findIndex((item) => item.id === response.data.id)
+                    : -1
+                if (Number(response.data.quantity) > 0) {
+                    if (index === -1) {
+                        this.groceryList.push(response.data)
+                    } else {
+                        this.groceryList.splice(index, 1, response.data)
+                    }
+                } else if (index !== -1) {
+                    this.groceryList.splice(index, 1)
+                }
+            }
+            this.postMessage = message
+            this.newItem = {
+                id: null,
+                name: '',
+                barcode: '',
+                ingredient: '',
+                quantity: 0,
+            }
         },
         // Copy a Item's values into the inline editor.
         startEdit(item) {

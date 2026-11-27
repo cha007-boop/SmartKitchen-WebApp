@@ -43,7 +43,8 @@
                     :edit-completed="editCompleted" @remove-item="removeItem" @edit-item="updateGroceryItem"
                     @edit-modal-open="updateError = ''">
                 </grocery-table>
-                <recipe-view v-else-if="currentView === 'recipes'" :recipes="recipeList" :error-message="errorMessage" :api-configured="apiConfigured">
+                <recipe-view v-else-if="currentView === 'recipes'" :recipes="recipeList"
+                    :is-demo-data="recipeDataIsDemo">
                 </recipe-view>
                 <add-item-view v-else
                     :is-submitting="isSubmitting"
