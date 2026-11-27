@@ -83,7 +83,7 @@ app.component('grocery-table', {
                             <td class="fw-semibold">{{ item.name }}</td>
                             <td>
                                 <span class="ingredient-tag badge rounded-pill text-bg-success-subtle">
-                                    {{ item.ingredientDa }}
+                                    {{ item.ingredient }}
                                 </span>
                             </td>
                             <td>{{ item.quantity }}</td>
@@ -122,14 +122,14 @@ app.component('grocery-table', {
                 :is-removing="isRemoving"
                 :remove-error="removeError"
                 :remove-completed="removeCompleted"
-                @confirm-remove="$emit('remove-item', $event)">
+                @confirm-remove="$emit('remove-item',$event)">
             </remove-item-modal>
             <edit-item-modal
                 ref="editItemModal"
                 :is-updating="isUpdating"
                 :update-error="updateError"
                 :edit-completed="editCompleted"
-                @confirm-edit="$emit('edit-item', $event)">
+                @confirm-edit="$emit('edit-item',$event)">
             </edit-item-modal>
         </section>`,
 })
