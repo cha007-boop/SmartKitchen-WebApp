@@ -83,7 +83,7 @@ app.component('grocery-table', {
                             <td class="fw-semibold">{{ item.name }}</td>
                             <td>
                                 <span class="ingredient-tag badge rounded-pill text-bg-success-subtle">
-                                    {{ item.ingredient }}
+                                    {{ item.ingredientDa }}
                                 </span>
                             </td>
                             <td>{{ item.quantity }}</td>

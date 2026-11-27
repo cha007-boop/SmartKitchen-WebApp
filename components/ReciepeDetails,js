@@ -1,0 +1,53 @@
+app.component('recipe-details', {
+    props: {
+        recipe: {
+            type: Object,
+            default: null,
+        },
+    },
+    emits: ['close'],
+    mounted() {
+        this.onKeydown = (event) => {
+            if (event.key === 'Escape' && this.recipe) {
+                this.$emit('close')
+            }
+        }
+        document.addEventListener('keydown', this.onKeydown)
+    },
+    beforeUnmount() {
+        document.removeEventListener('keydown', this.onKeydown)
+    },
+    template:
+        /*html*/
+        `<teleport to="body">
+            <div v-if="recipe">
+                <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true"
+                    aria-labelledby="recipe-details-title" @click.self="$emit('close')">
+                    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header">
+                                <div>
+                                    <span class="badge rounded-pill text-bg-success-subtle mb-2">{{ recipe.type }}</span>
+                                    <h2 id="recipe-details-title" class="modal-title h4 mb-0">{{ recipe.name }}</h2>
+                                </div>
+                                <button type="button" class="btn-close" aria-label="Luk" @click="$emit('close')"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <h3 class="h6 text-secondary mb-3">Ingredienser</h3>
+                                <ul class="list-group list-group-flush">
+                                    <li v-for="ingredient in recipe.ingredients" :key="ingredient"
+                                        class="list-group-item px-0">
+                                        {{ ingredient }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" @click="$emit('close')">Luk</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-backdrop fade show"></div>
+            </div>
+        </teleport>`,
+})

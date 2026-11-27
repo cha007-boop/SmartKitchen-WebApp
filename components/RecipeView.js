@@ -4,6 +4,10 @@ app.component('recipe-view', {
             type: Array,
             required: true,
         },
+        stock: {
+            type: Array,
+            default: () => [],
+        },
         isDemoData: {
             type: Boolean,
             default: false,
@@ -17,9 +21,20 @@ app.component('recipe-view', {
             activeIngredients: [],
             activeTypes: [],
             sortDirection: 'asc',
+            selectedRecipe: null,
         }
     },
     computed: {
+        stockedIngredients() {
+            const names = new Set()
+            this.stock
+                .filter((item) => Number(item.quantity) > 0)
+                .forEach((item) => {
+                    names.add(String(item.ingredientDa || '').trim().toLocaleLowerCase('da'))
+                    names.add(String(item.ingredient || '').trim().toLocaleLowerCase('da'))
+                })
+            return names
+        },
         ingredientOptions() {
             const ingredients = this.recipes.flatMap((recipe) => recipe.ingredients)
             return [...new Set(ingredients)].sort((first, second) => first.localeCompare(second, 'da'))
@@ -47,6 +62,9 @@ app.component('recipe-view', {
         },
     },
     methods: {
+        isInStock(ingredient) {
+            return this.stockedIngredients.has(String(ingredient).trim().toLocaleLowerCase('da'))
+        },
         addIngredientFilter() {
             const ingredient = this.ingredientInput.trim()
             const normalizedIngredient = ingredient.toLocaleLowerCase('da')
@@ -175,14 +193,18 @@ app.component('recipe-view', {
                 </div>
                 <div v-else class="row g-3">
                     <article v-for="recipe in filteredRecipes" :key="recipe.id" class="col-md-6 col-lg-4">
-                        <div class="recipe-result card h-100">
+                        <div class="recipe-result card h-100" role="button" tabindex="0"
+                            :aria-label="'Se opskrift: ' + recipe.name"
+                            @click="selectedRecipe = recipe"
+                            @keydown.enter="selectedRecipe = recipe">
                             <div class="card-body">
                                 <span class="badge rounded-pill text-bg-success-subtle mb-2">{{ recipe.type }}</span>
                                 <h4 class="h6">{{ recipe.name }}</h4>
                                 <p class="small text-secondary mb-2">Ingredienser</p>
                                 <div class="d-flex flex-wrap gap-1">
                                     <span v-for="ingredient in recipe.ingredients" :key="ingredient"
-                                        class="ingredient-tag badge rounded-pill">
+                                        class="ingredient-tag badge rounded-pill"
+                                        :class="{ 'ingredient-missing': !isInStock(ingredient) }">
                                         {{ ingredient }}
                                     </span>
                                 </div>
@@ -191,5 +213,52 @@ app.component('recipe-view', {
                     </article>
                 </div>
             </div>
+
+            <teleport to="body">
+                <div v-if="selectedRecipe">
+                    <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true"
+                        aria-labelledby="recipe-details-title" @click.self="selectedRecipe = null">
+                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <div class="modal-header py-3">
+                                    <div>
+                                        <span class="badge rounded-pill text-bg-success-subtle mb-1">{{ selectedRecipe.type }}</span>
+                                        <h2 id="recipe-details-title" class="modal-title h4 mb-0">{{ selectedRecipe.name }}</h2>
+                                    </div>
+                                    <button type="button" class="btn-close" aria-label="Luk" @click="selectedRecipe = null"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="row g-4">
+                                        <div v-if="selectedRecipe.imageLink" class="col-md-4">
+                                            <img :src="selectedRecipe.imageLink" :alt="selectedRecipe.name"
+                                                class="img-fluid rounded w-100"
+                                                style="max-height: 220px; object-fit: cover;">
+                                        </div>
+                                        <div :class="selectedRecipe.imageLink ? 'col-md-8' : 'col-12'">
+                                            <h3 class="h6 text-secondary mb-2">Ingredienser</h3>
+                                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                                <span v-for="ingredient in selectedRecipe.ingredients" :key="ingredient"
+                                                    class="ingredient-tag badge rounded-pill"
+                                                    :class="{ 'ingredient-missing': !isInStock(ingredient) }">
+                                                    {{ ingredient }}
+                                                </span>
+                                            </div>
+
+                                            <template v-if="selectedRecipe.description">
+                                                <h3 class="h6 text-secondary mb-2">Fremgangsmåde</h3>
+                                                <p class="mb-0">{{ selectedRecipe.description }}</p>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer py-2">
+                                    <button type="button" class="btn btn-outline-secondary" @click="selectedRecipe = null">Luk</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-backdrop fade show"></div>
+                </div>
+            </teleport>
         </section>`,
 })
