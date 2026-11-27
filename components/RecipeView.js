@@ -30,7 +30,6 @@ app.component('recipe-view', {
             this.stock
                 .filter((item) => Number(item.quantity) > 0)
                 .forEach((item) => {
-                    names.add(String(item.ingredientDa || '').trim().toLocaleLowerCase('da'))
                     names.add(String(item.ingredient || '').trim().toLocaleLowerCase('da'))
                 })
             return names
