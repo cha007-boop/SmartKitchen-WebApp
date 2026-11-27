@@ -36,18 +36,27 @@ app.component('edit-item-modal', {
         },
     },
     watch: {
-        editCompleted() {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('editItemModal')).hide()
+        editCompleted(newVal, oldVal) {
+            if (newVal === oldVal || newVal === 0) {
+                return
+            }
+            const el = document.getElementById('editItemModal')
+            if (el && typeof bootstrap !== 'undefined') {
+                bootstrap.Modal.getOrCreateInstance(el).hide()
+            }
             this.item = null
         },
     },
     methods: {
         open(item) {
             this.item = { ...item }
-            this.name = item.name
-            this.ingredient = item.ingredient
-            this.quantity = item.quantity
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('editItemModal')).show()
+            this.name = item.name ?? ''
+            this.ingredient = item.ingredient ?? ''
+            this.quantity = item.quantity ?? 0
+            const el = document.getElementById('editItemModal')
+            if (el && typeof bootstrap !== 'undefined') {
+                bootstrap.Modal.getOrCreateInstance(el).show()
+            }
         },
         confirmEdit() {
             if (!this.isValid || this.isUpdating) {

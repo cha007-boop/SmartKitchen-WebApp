@@ -30,8 +30,14 @@ app.component('remove-item-modal', {
         },
     },
     watch: {
-        removeCompleted() {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('removeConfirmModal')).hide()
+        removeCompleted(newVal, oldVal) {
+            if (newVal === oldVal || newVal === 0) {
+                return
+            }
+            const confirmEl = document.getElementById('removeConfirmModal')
+            if (confirmEl && typeof bootstrap !== 'undefined') {
+                bootstrap.Modal.getOrCreateInstance(confirmEl).hide()
+            }
             this.item = null
             this.amount = 1
         },
@@ -42,18 +48,37 @@ app.component('remove-item-modal', {
             this.amount = 1
 
             if (Number(item.quantity) === 1) {
-                this.showConfirmModal()
+                const confirmEl = document.getElementById('removeConfirmModal')
+                if (confirmEl && typeof bootstrap !== 'undefined') {
+                    bootstrap.Modal.getOrCreateInstance(confirmEl).show()
+                }
                 return
             }
 
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('removeAmountModal')).show()
+            const amountEl = document.getElementById('removeAmountModal')
+            if (amountEl && typeof bootstrap !== 'undefined') {
+                bootstrap.Modal.getOrCreateInstance(amountEl).show()
+            }
         },
         showConfirmModal() {
-            const amountModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('removeAmountModal'))
-            amountModal.hide()
-            window.setTimeout(() => {
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('removeConfirmModal')).show()
-            }, 150)
+            const amountEl = document.getElementById('removeAmountModal')
+            const confirmEl = document.getElementById('removeConfirmModal')
+            if (!confirmEl || typeof bootstrap === 'undefined') {
+                return
+            }
+
+            if (amountEl && amountEl.classList.contains('show')) {
+                amountEl.addEventListener(
+                    'hidden.bs.modal',
+                    () => {
+                        bootstrap.Modal.getOrCreateInstance(confirmEl).show()
+                    },
+                    { once: true }
+                )
+                bootstrap.Modal.getOrCreateInstance(amountEl).hide()
+            } else {
+                bootstrap.Modal.getOrCreateInstance(confirmEl).show()
+            }
         },
         confirmRemove() {
             if (!this.amountIsValid || this.isRemoving) {

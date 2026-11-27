@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
-    <title>Pantry | Indkøbsliste</title>
+    <title>Pantry | Grocery List</title>
     <!-- Import Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -23,27 +23,27 @@
             <main class="flex-grow-1">
                 <section class="page-intro pt-5 pb-4" aria-labelledby="page-title">
                     <p class="eyebrow small text-uppercase fw-semibold text-success mb-2">
-                        {{ currentView === 'groceries' ? 'Dit køkken' : (currentView === 'recipes' ? 'Madspiration' : 'Ny vare') }}
+                        {{ currentView === 'groceries' ? 'Your kitchen' : (currentView === 'recipes' ? 'Meal ideas' : 'New item') }}
                     </p>
                     <h1 id="page-title" class="fw-semibold mb-2">
-                        {{ currentView === 'groceries' ? 'Varer' : (currentView === 'recipes' ? 'Opskrifter' : 'Tilføj vare') }}
+                        {{ currentView === 'groceries' ? 'Groceries' : (currentView === 'recipes' ? 'Recipes' : 'Add item') }}
                     </h1>
                     <p class="intro-copy text-secondary mb-0">
                         {{ currentView === 'groceries'
-                        ? 'Hold styr på, hvad du har i dit køkken.'
+                        ? 'Keep track of what you have in your kitchen.'
                         : (currentView === 'recipes'
-                            ? 'Find opskrifter, der får mest muligt ud af dine ingredienser.'
-                            : 'Registrer en ny vare i dit køkken.') }}
+                            ? 'Find recipes that make the most of your ingredients.'
+                            : 'Log a new item in your kitchen.') }}
                     </p>
                 </section>
 
-                <grocery-table v-if="currentView === 'groceries'" :items="translatedGroceryList" :error-message="errorMessage"
+                <grocery-table v-if="currentView === 'groceries'" :items="groceryList" :error-message="errorMessage"
                     :api-configured="apiConfigured" :is-removing="isRemoving" :remove-error="removeError"
                     :remove-completed="removeCompleted" :is-updating="isUpdating" :update-error="updateError"
                     :edit-completed="editCompleted" @remove-item="removeItem" @edit-item="updateGroceryItem"
                     @edit-modal-open="updateError = ''">
                 </grocery-table>
-                <recipe-view v-else-if="currentView === 'recipes'" :recipes="recipeList" :stock="translatedGroceryList"
+                <recipe-view v-else-if="currentView === 'recipes'" :recipes="recipeList" :stock="groceryList"
                     :is-demo-data="recipeDataIsDemo">
                 </recipe-view>
                 <add-item-view v-else
@@ -55,12 +55,12 @@
                 </add-item-view>
             </main>
             <footer class="page-footer mt-auto text-center small text-secondary py-4">
-                Lidt mere organiseret, én vare ad gangen.
+                A little more organized, one item at a time.
             </footer>
         </div>
     </div>
     <!-- Import App -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="/js/main.js"></script>
     <script src="/components/AppHeader.js"></script>
     <script src="/components/RemoveItemModal.js"></script>
