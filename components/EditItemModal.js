@@ -30,7 +30,9 @@ app.component('edit-item-modal', {
             }
             return Boolean(this.item)
                 && Boolean(this.name.trim())
-                && Boolean(this.ingredient.trim())
+                && (this.ingredient === null
+                    || this.ingredient === ''
+                    || (typeof this.ingredient === 'string' && Boolean(this.ingredient.trim())))
                 && Number.isInteger(quantity)
                 && quantity >= 0
         },
@@ -79,7 +81,7 @@ app.component('edit-item-modal', {
                         <div class="mb-3">
                             <label class="form-label" for="editItemIngredient">Ingrediens</label>
                             <input id="editItemIngredient" v-model.trim="ingredient" type="text"
-                                class="form-control" required>
+                                class="form-control">
                         </div>
                         <div>
                             <label class="form-label" for="editItemQuantity">Mængde</label>

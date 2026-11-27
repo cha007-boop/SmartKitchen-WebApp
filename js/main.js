@@ -351,8 +351,10 @@ const app = Vue.createApp({
         },
         updateGroceryItem({ item, name, ingredient, quantity }) {
             const updatedQuantity = Number(quantity)
-            if (!name || !name.trim() || !ingredient || !ingredient.trim()) {
-                this.updateError = 'Navn og ingrediens skal udfyldes.'
+            if (!name || !name.trim()
+                || (ingredient !== null && ingredient !== ''
+                    && (typeof ingredient !== 'string' || !ingredient.trim()))) {
+                this.updateError = 'Navn skal udfyldes, og ingrediens skal være tekst eller null.'
                 return
             }
             if (!Number.isInteger(updatedQuantity) || updatedQuantity < 0) {
@@ -367,7 +369,7 @@ const app = Vue.createApp({
             const updatedItem = {
                 ...this.toApiItem(item),
                 name: name.trim(),
-                ingredient: ingredient.trim(),
+                ingredient: ingredient === null || ingredient === '' ? null : ingredient.trim(),
                 quantity: updatedQuantity,
             }
 
