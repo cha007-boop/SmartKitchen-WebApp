@@ -1,4 +1,4 @@
-const baseURL = ''
+const baseURL = 'https://smartkitchenapi20261123093015-g3hmc6hgasf9esh2.italynorth-01.azurewebsites.net/api/groceries'
 
 const app = Vue.createApp({
     data() {
