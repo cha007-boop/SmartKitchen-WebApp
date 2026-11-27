@@ -23,17 +23,17 @@
             <main class="flex-grow-1">
                 <section class="page-intro pt-5 pb-4" aria-labelledby="page-title">
                     <p class="eyebrow small text-uppercase fw-semibold text-success mb-2">
-                        {{ currentView === 'groceries' ? 'Your kitchen' : (currentView === 'recipes' ? 'Meal ideas' : 'New item') }}
+                        {{ currentView === 'groceries' ? 'Dit køkken' : (currentView === 'recipes' ? 'måltids ideer' : 'New item') }}
                     </p>
                     <h1 id="page-title" class="fw-semibold mb-2">
-                        {{ currentView === 'groceries' ? 'Groceries' : (currentView === 'recipes' ? 'Recipes' : 'Add item') }}
+                        {{ currentView === 'groceries' ? 'Varer' : (currentView === 'recipes' ? 'Opskrifter' : 'Add item') }}
                     </h1>
                     <p class="intro-copy text-secondary mb-0">
                         {{ currentView === 'groceries'
-                        ? 'Keep track of what you have in your kitchen.'
+                        ? 'Her er hvad er i dit køkken'
                         : (currentView === 'recipes'
-                            ? 'Find recipes that make the most of your ingredients.'
-                            : 'Log a new item in your kitchen.') }}
+                            ? 'Find opskrifter der bruger dine ingredienser'
+                            : 'Tilføj ingredienser til dit digitale køkken') }}
                     </p>
                 </section>
 
@@ -54,9 +54,6 @@
                     @submit-item="postItem">
                 </add-item-view>
             </main>
-            <footer class="page-footer mt-auto text-center small text-secondary py-4">
-                A little more organized, one item at a time.
-            </footer>
         </div>
     </div>
     <!-- Import App -->

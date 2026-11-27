@@ -13,6 +13,12 @@ const app = Vue.createApp({
             ingredientList: [],
             recipeList: [
                 {
+                    //This is how the properties match onto the backend model
+                    //id = Id
+                    //name = Name
+                    //ingredients = IngredientStrings
+                    //description = Instructions
+                    //imageLink = thumbnailUrl
                     id: 1,
                     name: 'Baked Tomato Pasta',
                     type: 'Dinner',
